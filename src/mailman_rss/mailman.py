@@ -105,7 +105,7 @@ class MailmanArchive(object):
                                   self.iter_header_list()):
             length = min(len(mbox), len(headers))
             if len(mbox) != len(headers):
-                logger.warning(
+                logger.info(
                     "Unmatched header and mbox size: "
                     "mbox={} vs headers={}".format(len(mbox), len(headers)))
             for index in reversed(range(length)):
