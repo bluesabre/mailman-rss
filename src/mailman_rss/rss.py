@@ -68,7 +68,8 @@ class RSSWriter(object):
         item = self._add_element(channel, "item")
         self._add_element(item, "author", message.author)
         self._add_element(item, "title", message.subject)
-        self._add_element(item, "pubDate", self._format_date(message.date))
+        if message.date is not None:
+            self._add_element(item, "pubDate", self._format_date(message.date))
         self._add_element(item, "guid", message.message_id,
                           isPermaLink="false")
         self._add_element(item, "description", message.body)
