@@ -5,12 +5,15 @@ from collections import namedtuple
 from contextlib import closing
 from logging import getLogger
 import os
-import sqlite3
 from datetime import datetime
 import time
 
-
 logger = getLogger(__file__)
+
+try:
+    import sqlite3
+except ImportError as e:
+    logger.error(e)
 
 
 class HeaderScraper(object):
