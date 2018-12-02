@@ -15,15 +15,15 @@ class TestMailmanArchive(unittest.TestCase):
 
     def test_rsswriter_stringio(self):
         archive = MailmanArchive(ARCHIVE_URL)
-        f = StringIO()
-        writer = RSSWriter(fp=f, max_items=1)
-        writer.write(archive)
+        with StringIO() as f:
+            writer = RSSWriter(max_items=1)
+            writer.write(f, archive)
 
     def test_rsswriter_filename(self):
         archive = MailmanArchive(ARCHIVE_URL)
         with tempfile.NamedTemporaryFile(suffix=".rss") as f:
-            writer = RSSWriter(fp=f.name, max_items=1)
-            writer.write(archive)
+            writer = RSSWriter(max_items=1)
+            writer.write(f.name, archive)
 
 
 class TestHeaderScraper(unittest.TestCase):

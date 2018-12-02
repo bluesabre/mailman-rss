@@ -12,4 +12,7 @@ publish: package
 	pip install twine
 	twine upload dist/*
 
+test:
+	python tests.py
+
 .PHONY: clean package publish

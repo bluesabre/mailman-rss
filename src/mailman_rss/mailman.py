@@ -72,23 +72,25 @@ class MailmanArchive(object):
 
     def iter_mboxes(self):
         for a in self._soup.find_all("a", href=re.compile(r".*txt(.gz)?")):
-            url = a.get("href")
-            if not url.endswith(".gz"):
-                url = url + ".gz"
-            gzip_url = os.path.join(self.archive_url, url)
+            url = os.path.join(self.archive_url, a.get("href"))
             try:
-                yield self._get_month(gzip_url)
+                data = self._get_month(url)
+                with tempfile.NamedTemporaryFile(delete=True) as f:
+                    f.write(data)
+                    f.flush()
+                    mbox = mailbox.mbox(f.name, create=False)
+                    yield mbox
+                    mbox.close()
             except OSError as e:
                 logger.error("{}".format(e))
 
-    def _get_month(self, gzip_url):
-        r = requests.get(gzip_url, stream=True)
-        zipped_mbox = gzip.GzipFile(fileobj=io.BytesIO(r.raw.read())).read()
-        with tempfile.NamedTemporaryFile() as f:
-            f.write(zipped_mbox)
-            f.flush()
-            mbox = mailbox.mbox(f.name)
-            return mbox
+    def _get_month(self, url):
+        r = requests.get(url, stream=True)
+        if url.endswith(".gz"):
+            with io.BytesIO(r.raw.read()) as f:
+                with gzip.open(f) as zf:
+                    return zf.read()
+        return r.raw.read()
 
     def iter_headers(self, reverse=True):
         for headers in self.iter_header_list():

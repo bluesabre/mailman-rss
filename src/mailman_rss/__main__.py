@@ -67,10 +67,10 @@ def main():
     if config["command"] == "rss":
         archive = MailmanArchive(config["archive_url"],
                                  encoding=config["encoding"])
-        writer = RSSWriter(fp=args.output if args.output else sys.stdout,
-                           max_items=config["max_items"],
+        writer = RSSWriter(max_items=config["max_items"],
                            language=config["language"])
-        writer.write(archive)
+        writer.write(args.output if args.output else sys.stdout,
+                     archive)
     elif config["command"] == "twitter":
         import twitter
         api = twitter.Api(consumer_key=config["consumer_key"],

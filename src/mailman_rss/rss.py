@@ -13,24 +13,13 @@ logger = getLogger(__file__)
 
 class RSSWriter(object):
     """  """
-    def __init__(self, fp, max_items=25, language=None):
+    def __init__(self, max_items=25, language=None):
         self.max_items = max_items
         self.language = language
         logger.debug("{}: {} max items".format(
             self.__class__.__name__, max_items))
 
-        if hasattr(fp, "write"):
-            self.filename = None
-            self.fp = fp
-        else:
-            self.filename = fp
-            self.fp = open(self.filename, "wb" if str == bytes else "w")
-
-    def __del__(self):
-        if self.filename:
-            self.fp.close()
-
-    def write(self, archive, pretty=True):
+    def write(self, fp, archive, pretty=True):
         self.doc = xml.dom.minidom.Document()
         rss = self._add_element(self.doc, "rss", version="2.0")
         channel = self._add_element(rss, "channel")
@@ -39,11 +28,14 @@ class RSSWriter(object):
             self._write_item(channel, message)
             if index + 1 >= self.max_items:
                 break
-        if pretty:
-            self.doc.writexml(self.fp, addindent="  ", newl="\n",
-                              encoding="utf-8")
+
+        kwargs = dict(addindent="  ", newl="\n") if pretty else dict()
+        if hasattr(fp, "write"):
+            self.doc.writexml(fp, encoding="utf-8", **kwargs)
         else:
-            self.doc.writexml(self.fp, encoding="utf-8")
+            logger.debug("Writing to %s" % fp)
+            with open(fp, "wb" if str == bytes else "w") as f:
+                self.doc.writexml(f, encoding="utf-8", **kwargs)
 
     def _add_element(self, parent, name, content="", **kwargs):
         elem = parent.appendChild(self.doc.createElement(name))
