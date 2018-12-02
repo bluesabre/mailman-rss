@@ -40,6 +40,7 @@ setup(
         'python-dateutil',
         'future',
         'requests',
+        'sqlite3',
     ],
     extras_require={
         'twitter': 'python-twitter',
