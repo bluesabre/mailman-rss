@@ -194,7 +194,7 @@ class Message(mailbox.mboxMessage, object):
             body = self.get_payload(0)
         else:
             body = self.get_payload()
-        parts = re.split(re.compile("^-+\s+next part\s+-+$", re.MULTILINE),
+        parts = re.split(re.compile(r"^-+\s+next part\s+-+$", re.MULTILINE),
                          body)
         return [part.strip() for part in parts]
 
