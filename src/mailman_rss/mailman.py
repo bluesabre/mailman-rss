@@ -90,7 +90,7 @@ class MailmanArchive(object):
             with io.BytesIO(r.raw.read()) as f:
                 with gzip.open(f) as zf:
                     return zf.read()
-        return r.raw.read()
+        return r.content
 
     def iter_headers(self, reverse=True):
         for headers in self.iter_header_list():
